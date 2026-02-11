@@ -3,158 +3,1059 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ip test</title>
+    <title>🌐 Speed Test - Проверка скорости</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🌐</text></svg>">
     <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-            background-color: black;
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Share+Tech+Mono&family=Creepster&display=swap');
+
+        :root {
+            --primary: #4f8cff;
+            --bg: #f0f4f8;
+            --card: #ffffff;
+            --text: #1a1a2e;
+            --subtle: #8892a4;
+            --success: #34d399;
+            --danger: #ff4444;
         }
-        .overlay {
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ============ НЕВИННЫЙ РЕЖИМ ============ */
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            transition: background 0.5s;
+            overflow-x: hidden;
+        }
+
+        .innocent-page {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 40px 20px;
+            transition: opacity 0.3s;
+        }
+
+        .logo {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .logo h1 {
+            font-size: 2em;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .logo p {
+            color: var(--subtle);
+            font-size: 0.95em;
+            margin-top: 5px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: 16px;
+            padding: 35px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+            margin-bottom: 20px;
+        }
+
+        .speed-display {
+            text-align: center;
+            padding: 30px 0;
+        }
+        .speed-number {
+            font-size: 5em;
+            font-weight: 700;
+            color: var(--primary);
+            line-height: 1;
+            transition: all 0.3s;
+        }
+        .speed-unit {
+            font-size: 1.2em;
+            color: var(--subtle);
+            margin-top: 5px;
+        }
+
+        .progress-ring {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 20px;
+            position: relative;
+        }
+        .progress-ring svg {
+            transform: rotate(-90deg);
+        }
+        .progress-ring circle {
+            fill: none;
+            stroke-width: 8;
+        }
+        .progress-bg {
+            stroke: #e8ecf1;
+        }
+        .progress-fill {
+            stroke: var(--primary);
+            stroke-linecap: round;
+            stroke-dasharray: 565;
+            stroke-dashoffset: 565;
+            transition: stroke-dashoffset 0.5s ease;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 15px;
+            margin-top: 25px;
+        }
+        .info-item {
+            text-align: center;
+            padding: 15px;
+            background: #f7f9fc;
+            border-radius: 12px;
+        }
+        .info-item .label {
+            font-size: 0.8em;
+            color: var(--subtle);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .info-item .value {
+            font-size: 1.3em;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .start-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #4f8cff, #6c5ce7);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79,140,255,0.35);
+        }
+        .start-btn:active {
+            transform: translateY(0);
+        }
+        .start-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status-text {
+            text-align: center;
+            color: var(--subtle);
+            font-size: 0.9em;
+            margin-top: 15px;
+            min-height: 20px;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: #e8ecf1;
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #4f8cff, #6c5ce7);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        .footer-text {
+            text-align: center;
+            color: var(--subtle);
+            font-size: 0.8em;
+            margin-top: 30px;
+        }
+        .footer-text a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        /* Маленькая иконка загрузки */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            vertical-align: middle;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* ============ СТРАШНЫЙ РЕЖИМ ============ */
+        .horror-active {
+            background: #000 !important;
+            overflow: hidden !important;
+        }
+
+        .horror-video {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
-            font-size: 2.5em;
-            font-family: 'Arial', sans-serif;
-            cursor: pointer;
-            border-radius: 10px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
-        }
-        .overlay:hover {
-            background: rgba(1, 25, 100, 0.8);
-        }
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-        .fullscreen-video {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
-            z-index: -1;
+            z-index: 99990;
             display: none;
         }
-        .popup-video {
-            width: 200px;
-            height: 150px;
+
+        .horror-scanlines {
             position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 99999;
-            transition: all 0.5s ease;
-        }
-        .move {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-        }
-        .popup-video iframe {
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
+            background: repeating-linear-gradient(
+                0deg,
+                rgba(0,0,0,0.15) 0px,
+                rgba(0,0,0,0.15) 1px,
+                transparent 1px,
+                transparent 3px
+            );
+            z-index: 99993;
+            pointer-events: none;
+            display: none;
+            animation: scanMove 0.1s linear infinite;
+        }
+
+        .horror-vignette {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 99994;
+            pointer-events: none;
+            display: none;
+            box-shadow: inset 0 0 200px rgba(255,0,0,0.4);
+            animation: vigPulse 1.5s ease-in-out infinite;
+        }
+
+        .horror-text {
+            position: fixed;
+            font-family: 'Creepster', cursive;
+            color: #ff0000;
+            z-index: 99995;
+            pointer-events: none;
+            text-shadow: 0 0 15px #ff0000, 0 0 30px #ff0000;
+        }
+
+        .horror-flash {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 99992;
+            pointer-events: none;
+            display: none;
+            animation: redFlash 0.2s ease-in-out infinite;
+        }
+
+        .access-denied-big {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            font-family: 'Creepster', cursive;
+            font-size: 6em;
+            color: #ff0000;
+            z-index: 99999;
+            pointer-events: none;
+            text-shadow: 0 0 30px #ff0000, 0 0 60px #cc0000;
+            letter-spacing: 10px;
+            white-space: nowrap;
+            display: none;
+        }
+
+        .access-denied-big.show {
+            display: block;
+            animation: adAppear 0.6s forwards;
+        }
+
+        .ip-horror-display {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: rgba(0,0,0,0.85);
+            border: 1px solid #ff0000;
+            border-radius: 8px;
+            padding: 12px 18px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #00ff00;
+            font-size: 0.85em;
+            z-index: 99996;
+            display: none;
+            box-shadow: 0 0 20px rgba(255,0,0,0.3);
+            line-height: 1.6;
+        }
+        .ip-horror-display .red { color: #ff0000; }
+
+        .escape-counter {
+            position: fixed;
+            bottom: 15px;
+            left: 15px;
+            font-family: 'Share Tech Mono', monospace;
+            color: #ff0000;
+            font-size: 0.85em;
+            z-index: 99996;
+            display: none;
+            opacity: 0.8;
+        }
+
+        .fake-close-btn {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            width: 35px;
+            height: 35px;
+            background: #ff0000;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 1.3em;
+            cursor: pointer;
+            z-index: 99998;
+            display: none;
+            transition: all 0.15s;
+            font-family: Arial;
+            line-height: 35px;
+            text-align: center;
+        }
+
+        .horror-particle {
+            position: fixed;
+            width: 3px;
+            height: 3px;
+            background: #ff0000;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 99991;
+            box-shadow: 0 0 8px #ff0000;
+        }
+
+        canvas.matrix-rain {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 99991;
+            pointer-events: none;
+            opacity: 0.12;
+            display: none;
+        }
+
+        /* ===== АНИМАЦИИ ===== */
+        @keyframes scanMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(3px); }
+        }
+        @keyframes vigPulse {
+            0%,100% { box-shadow: inset 0 0 200px rgba(255,0,0,0.3); }
+            50% { box-shadow: inset 0 0 250px rgba(255,0,0,0.6); }
+        }
+        @keyframes redFlash {
+            0%,100% { background: transparent; }
+            50% { background: rgba(255,0,0,0.06); }
+        }
+        @keyframes adAppear {
+            0% { transform: translate(-50%,-50%) scale(0.3); opacity: 0; }
+            60% { transform: translate(-50%,-50%) scale(1.15); opacity: 1; }
+            100% { transform: translate(-50%,-50%) scale(1); opacity: 1; }
+        }
+        @keyframes screenShake {
+            0%,100% { transform: translate(0); }
+            10% { transform: translate(-6px,-4px); }
+            20% { transform: translate(6px,4px); }
+            30% { transform: translate(-4px,6px); }
+            40% { transform: translate(4px,-6px); }
+            50% { transform: translate(-6px,4px); }
+            60% { transform: translate(6px,-4px); }
+            70% { transform: translate(-4px,-6px); }
+            80% { transform: translate(4px,6px); }
+            90% { transform: translate(-6px,-4px); }
+        }
+        .shake { animation: screenShake 0.5s ease-in-out; }
+
+        @keyframes textGlitch {
+            0%,90%,100% { transform: translate(0); filter: none; }
+            92% { transform: translate(-4px,2px); filter: hue-rotate(90deg); }
+            94% { transform: translate(4px,-2px); filter: hue-rotate(-90deg); }
+            96% { transform: translate(-2px,-1px); }
         }
     </style>
 </head>
 <body>
-    <div class="overlay" id="overlay">
-        <span style="color: yellow;">Enter key</span>
+
+    <!-- ============ НЕВИННАЯ СТРАНИЦА ============ -->
+    <div class="innocent-page" id="innocentPage">
+        <div class="logo">
+            <h1>🌐 SpeedCheck</h1>
+            <p>Быстрая проверка скорости интернета</p>
+        </div>
+
+        <div class="card">
+            <div class="speed-display">
+                <div class="progress-ring">
+                    <svg width="200" height="200">
+                        <circle class="progress-bg" cx="100" cy="100" r="90"/>
+                        <circle class="progress-fill" id="progressFill" cx="100" cy="100" r="90"/>
+                    </svg>
+                </div>
+                <div class="speed-number" id="speedNumber">0</div>
+                <div class="speed-unit">Мбит/с</div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label">Пинг</div>
+                    <div class="value" id="pingValue">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Загрузка</div>
+                    <div class="value" id="downloadValue">—</div>
+                </div>
+                <div class="info-item">
+                    <div class="label">Отдача</div>
+                    <div class="value" id="uploadValue">—</div>
+                </div>
+            </div>
+
+            <div class="progress-bar-container" id="progressBar">
+                <div class="progress-bar-fill" id="progressBarFill"></div>
+            </div>
+
+            <button class="start-btn" id="startBtn">🚀 Начать тест</button>
+            <div class="status-text" id="statusText">Нажмите кнопку для начала проверки</div>
+        </div>
+
+        <div class="footer-text">
+            © 2025 SpeedCheck · <a href="#">Политика конфиденциальности</a> · v3.2.1
+        </div>
     </div>
 
-    <video id="kingVideo" class="fullscreen-video" autoplay muted loop>
-        <source src="King.mov" type="video/mp4">
+    <!-- ============ СТРАШНЫЙ РЕЖИМ ============ -->
+    <video id="horrorVideo" class="horror-video" loop playsinline>
+        <source src="Scream.mp4" type="video/mp4">
     </video>
-    
-    <audio id="screamAudio" autoplay loop>
-        <source src="Scream.mp3" type="audio/mp3">
+
+    <audio id="horrorAudio" loop>
+        <source src="Scream.mp3" type="audio/mpeg">
     </audio>
 
-    <script>
-        const overlay = document.getElementById("overlay");
-        const kingVideo = document.getElementById("kingVideo");
-        const screamAudio = document.getElementById("screamAudio");
+    <div class="horror-scanlines" id="horrorScanlines"></div>
+    <div class="horror-vignette" id="horrorVignette"></div>
+    <div class="horror-flash" id="horrorFlash"></div>
+    <canvas class="matrix-rain" id="matrixCanvas"></canvas>
 
-        function goFullScreen() {
-            if (document.documentElement.requestFullscreen) {
-                document.documentElement.requestFullscreen();
-            } else if (document.documentElement.mozRequestFullScreen) {
-                document.documentElement.mozRequestFullScreen();
-            } else if (document.documentElement.webkitRequestFullscreen) {
-                document.documentElement.webkitRequestFullscreen();
-            } else if (document.documentElement.msRequestFullscreen) {
-                document.documentElement.msRequestFullscreen();
+    <div class="access-denied-big" id="accessDenied">ACCESS DENIED</div>
+
+    <div class="ip-horror-display" id="ipHorrorDisplay">
+        &gt; SCANNING TARGET...<br>
+        &gt; IP: <span class="red" id="horrorIP">...</span><br>
+        &gt; CITY: <span class="red" id="horrorCity">...</span><br>
+        &gt; ISP: <span class="red" id="horrorISP">...</span><br>
+        &gt; STATUS: <span class="red">TRACKING</span>
+    </div>
+
+    <div class="escape-counter" id="escapeCounter">
+        ☠ ESCAPE ATTEMPTS: <span id="escCount">0</span>
+    </div>
+
+    <button class="fake-close-btn" id="fakeCloseBtn">✕</button>
+
+    <script>
+        // ==============================
+        //         ПЕРЕМЕННЫЕ
+        // ==============================
+        const innocentPage = document.getElementById("innocentPage");
+        const startBtn = document.getElementById("startBtn");
+        const speedNumber = document.getElementById("speedNumber");
+        const progressFill = document.getElementById("progressFill");
+        const progressBar = document.getElementById("progressBar");
+        const progressBarFill = document.getElementById("progressBarFill");
+        const statusText = document.getElementById("statusText");
+        const pingValue = document.getElementById("pingValue");
+        const downloadValue = document.getElementById("downloadValue");
+        const uploadValue = document.getElementById("uploadValue");
+
+        const horrorVideo = document.getElementById("horrorVideo");
+        const horrorAudio = document.getElementById("horrorAudio");
+        const horrorScanlines = document.getElementById("horrorScanlines");
+        const horrorVignette = document.getElementById("horrorVignette");
+        const horrorFlash = document.getElementById("horrorFlash");
+        const matrixCanvas = document.getElementById("matrixCanvas");
+        const accessDenied = document.getElementById("accessDenied");
+        const ipHorrorDisplay = document.getElementById("ipHorrorDisplay");
+        const escapeCounter = document.getElementById("escapeCounter");
+        const fakeCloseBtn = document.getElementById("fakeCloseBtn");
+
+        let horrorMode = false;
+        let escAttempts = 0;
+        let allPopups = [];
+        let userIP = "UNKNOWN";
+
+        // ==============================
+        //     НЕВИННАЯ ФАЗА — ТЕСТ
+        // ==============================
+        startBtn.addEventListener("click", () => {
+            startBtn.disabled = true;
+            startBtn.innerHTML = '<span class="spinner"></span>Тестирование...';
+            progressBar.style.display = "block";
+            statusText.textContent = "Определение пинга...";
+
+            let progress = 0;
+            let speed = 0;
+            const totalSteps = 100;
+            let step = 0;
+
+            const fakeTest = setInterval(() => {
+                step++;
+                progress = Math.min((step / totalSteps) * 100, 100);
+                progressBarFill.style.width = progress + "%";
+
+                // Прогресс-кольцо (окружность = 2*PI*90 ≈ 565)
+                const offset = 565 - (565 * progress / 100);
+                progressFill.style.strokeDashoffset = offset;
+
+                if (step <= 15) {
+                    // Пинг
+                    const ping = Math.floor(Math.random() * 30 + 5);
+                    pingValue.textContent = ping + " мс";
+                    statusText.textContent = "Измерение пинга...";
+                } else if (step <= 60) {
+                    // Загрузка
+                    speed = Math.min(speed + Math.random() * 8, 150 + Math.random() * 50);
+                    speedNumber.textContent = Math.floor(speed);
+                    downloadValue.textContent = Math.floor(speed) + " Мб/с";
+                    statusText.textContent = "Измерение скорости загрузки...";
+                } else if (step <= 85) {
+                    // Отдача
+                    const upload = Math.floor(speed * 0.3 + Math.random() * 10);
+                    uploadValue.textContent = upload + " Мб/с";
+                    statusText.textContent = "Измерение скорости отдачи...";
+                } else if (step <= 95) {
+                    statusText.textContent = "Финализация результатов...";
+                }
+
+                if (step >= totalSteps) {
+                    clearInterval(fakeTest);
+                    statusText.textContent = "Загрузка подробного отчёта...";
+                    progressBarFill.style.width = "100%";
+
+                    // Пауза, будто грузит отчёт, затем — АД
+                    setTimeout(() => {
+                        statusText.textContent = "Подключение к серверу анализа...";
+                    }, 800);
+                    setTimeout(() => {
+                        statusText.textContent = "Получение данных...";
+                    }, 1600);
+                    setTimeout(() => {
+                        activateHorror();
+                    }, 2500);
+                }
+            }, 80);
+        });
+
+        // ==============================
+        //      ЗАГРУЗКА РЕАЛЬНОГО IP
+        // ==============================
+        function loadRealIP() {
+            fetch("https://api.ipify.org?format=json")
+                .then(r => r.json())
+                .then(data => {
+                    userIP = data.ip;
+                    document.getElementById("horrorIP").textContent = data.ip;
+                    return fetch(`https://ipapi.co/${data.ip}/json/`);
+                })
+                .then(r => r.json())
+                .then(loc => {
+                    document.getElementById("horrorCity").textContent =
+                        (loc.city || "???") + ", " + (loc.country_name || "???");
+                    document.getElementById("horrorISP").textContent =
+                        loc.org || "CLASSIFIED";
+                })
+                .catch(() => {
+                    document.getElementById("horrorIP").textContent = "HIDDEN";
+                    document.getElementById("horrorCity").textContent = "CLASSIFIED";
+                    document.getElementById("horrorISP").textContent = "UNKNOWN";
+                });
+        }
+        // Грузим IP заранее, пока юзер на невинной странице
+        loadRealIP();
+
+        // ==============================
+        //      FULLSCREEN
+        // ==============================
+        function goFS() {
+            const el = document.documentElement;
+            try {
+                (el.requestFullscreen || el.mozRequestFullScreen ||
+                 el.webkitRequestFullscreen || el.msRequestFullscreen).call(el);
+            } catch(e) {}
+        }
+        function forceFS() {
+            if (!document.fullscreenElement && horrorMode) {
+                goFS();
             }
         }
 
-        overlay.addEventListener("click", function() {
-            overlay.classList.add("hidden");
-            kingVideo.style.display = 'block';
-            kingVideo.play();
-            screamAudio.play();
-            screamAudio.volume = 1.0;
-            goFullScreen();
-        });
+        // ==============================
+        //     МАТРИЦА (красный дождь)
+        // ==============================
+        function startMatrixRain() {
+            matrixCanvas.style.display = "block";
+            const ctx = matrixCanvas.getContext("2d");
+            matrixCanvas.width = window.innerWidth;
+            matrixCanvas.height = window.innerHeight;
 
-        function openVideoWindow() {
-            const popup = window.open("", "_blank", "width=350,height=200");
-
-            popup.document.write(`
-                <html>
-                    <head>
-                        <style>
-                            body {
-                                margin: 0;
-                                padding: 0;
-                                background: black;
-                            }
-                            video {
-                                width: 100%;
-                                height: 100%;
-                            }
-                        </style>
-                    </head>
-                    <body>
-                        <video autoplay muted loop>
-                            <source src="King.mov" type="video/mp4">
-                        </video>
-                    </body>
-                </html>
-            `);
-            popup.document.close();
+            const chars = "01ゲームオーバーERROR死FATAL亡HACK暗黒";
+            const fs = 14;
+            const cols = Math.floor(matrixCanvas.width / fs);
+            const drops = Array(cols).fill(1);
 
             setInterval(() => {
-                if (!popup.closed) {
-                    let randomX = Math.random() * screen.width;
-                    let randomY = Math.random() * screen.height;
-                    let randomSpeedX = Math.random() * 15 + 7;
-                    let randomSpeedY = Math.random() * 15 + 7;
-                    let directionX = randomX > screen.width / 2 ? 1 : -1;
-                    let directionY = randomY > screen.height / 2 ? 1 : -1;
+                ctx.fillStyle = "rgba(0,0,0,0.05)";
+                ctx.fillRect(0, 0, matrixCanvas.width, matrixCanvas.height);
+                ctx.font = fs + "px monospace";
 
-                    popup.moveTo(randomX, randomY);
-                    popup.resizeTo(1640 + Math.random() * 105, 220 + Math.random() * 71);
+                for (let i = 0; i < drops.length; i++) {
+                    ctx.fillStyle = Math.random() > 0.5 ? "#ff0000" : "#880000";
+                    const ch = chars[Math.floor(Math.random() * chars.length)];
+                    ctx.fillText(ch, i * fs, drops[i] * fs);
+                    if (drops[i] * fs > matrixCanvas.height && Math.random() > 0.975)
+                        drops[i] = 0;
+                    drops[i]++;
                 }
-            }, 3);
+            }, 45);
         }
 
-        kingVideo.addEventListener("click", function() {
-            openVideoWindow();
+        // ==============================
+        //     POPUP-ОКНА (ГИДРА)
+        // ==============================
+        function openHorrorPopup() {
+            try {
+                const w = 250 + Math.floor(Math.random() * 300);
+                const h = 180 + Math.floor(Math.random() * 200);
+                const x = Math.floor(Math.random() * (screen.width - w));
+                const y = Math.floor(Math.random() * (screen.height - h));
+
+                const popup = window.open("", "_blank",
+                    `width=${w},height=${h},left=${x},top=${y},menubar=no,toolbar=no,location=no,status=no`);
+                if (!popup) return;
+
+                popup.document.write(`<!DOCTYPE html><html><head>
+                    <title>SYSTEM ERROR</title>
+                    <style>
+                        *{margin:0;padding:0}
+                        body{background:#000;overflow:hidden}
+                        video{width:100%;height:100%;object-fit:cover;position:fixed;top:0;left:0}
+                        .overlay-err{position:fixed;top:0;left:0;width:100%;height:100%;
+                            display:flex;justify-content:center;align-items:center;
+                            pointer-events:none;z-index:10}
+                        .err{color:#ff0000;font-family:'Courier New',monospace;font-size:2.5em;
+                            text-shadow:0 0 15px red,0 0 30px red;animation:blink .4s infinite}
+                        @keyframes blink{50%{opacity:.2}}
+                        .scanl{position:fixed;top:0;left:0;width:100%;height:100%;
+                            background:repeating-linear-gradient(0deg,rgba(0,0,0,.12)0px,
+                            rgba(0,0,0,.12)1px,transparent 1px,transparent 3px);
+                            pointer-events:none;z-index:11}
+                    </style></head><body>
+                    <video autoplay muted loop playsinline>
+                        <source src="Scream.mp4" type="video/mp4">
+                    </video>
+                    <div class="scanl"></div>
+                    <div class="overlay-err"><div class="err">☠ ERROR ☠</div></div>
+                    <script>
+                        window.onbeforeunload=function(){return""};
+                        // При попытке закрыть — уведомить родителя
+                        setInterval(function(){
+                            try{ if(window.opener && window.opener.onPopupClosed)
+                                window.opener.onPopupClosed(); } catch(e){}
+                        },500);
+                    <\/script>
+                    </body></html>`);
+                popup.document.close();
+
+                allPopups.push(popup);
+
+                // Хаотичное движение
+                const mover = setInterval(() => {
+                    if (popup.closed) {
+                        clearInterval(mover);
+                        // Гидра: закрыл 1 — открылись 2
+                        escAttempts++;
+                        updateEscCount();
+                        showAccessDenied();
+                        openHorrorPopup();
+                        openHorrorPopup();
+                        return;
+                    }
+                    try {
+                        popup.moveTo(
+                            Math.floor(Math.random() * (screen.width - 300)),
+                            Math.floor(Math.random() * (screen.height - 250))
+                        );
+                        popup.resizeTo(
+                            250 + Math.floor(Math.random() * 350),
+                            180 + Math.floor(Math.random() * 250)
+                        );
+                    } catch(e) {}
+                }, 60 + Math.floor(Math.random() * 80));
+
+            } catch(e) {}
+        }
+
+        // Глобальная функция для вызова из попапов
+        window.onPopupClosed = function() {
+            // Вызывается когда попап обнаруживает что его пытаются закрыть
+        };
+
+        // ==============================
+        //     ЧАСТИЦЫ
+        // ==============================
+        function spawnParticle(x, y) {
+            const p = document.createElement("div");
+            p.className = "horror-particle";
+            p.style.left = x + "px";
+            p.style.top = y + "px";
+            document.body.appendChild(p);
+
+            const angle = Math.random() * Math.PI * 2;
+            const speed = Math.random() * 120 + 40;
+            let opacity = 1;
+            const anim = setInterval(() => {
+                const cx = parseFloat(p.style.left);
+                const cy = parseFloat(p.style.top);
+                p.style.left = (cx + Math.cos(angle) * speed * 0.02) + "px";
+                p.style.top = (cy + Math.sin(angle) * speed * 0.02) + "px";
+                opacity -= 0.025;
+                p.style.opacity = opacity;
+                if (opacity <= 0) { clearInterval(anim); p.remove(); }
+            }, 16);
+        }
+        function burstParticles(x, y, n = 25) {
+            for (let i = 0; i < n; i++) spawnParticle(x, y);
+        }
+
+        // ==============================
+        //     ПРЕДУПРЕЖДЕНИЯ
+        // ==============================
+        function spawnWarning() {
+            const msgs = [
+                "⚠ CONNECTION INTERCEPTED",
+                "☠ DATA BREACH DETECTED",
+                "⚡ FIREWALL BYPASSED",
+                "🔒 ENCRYPTION FAILED",
+                "💀 SYSTEM COMPROMISED",
+                "⛔ UNAUTHORIZED ACCESS",
+                "🔴 CRITICAL ALERT",
+                "☠ TRACKING YOUR DEVICE",
+                "⚠ MALWARE INJECTED",
+                "💀 NO ESCAPE"
+            ];
+            const el = document.createElement("div");
+            el.className = "horror-text";
+            el.textContent = msgs[Math.floor(Math.random() * msgs.length)];
+            el.style.left = (5 + Math.random() * 70) + "%";
+            el.style.top = (5 + Math.random() * 70) + "%";
+            el.style.fontSize = (1 + Math.random() * 2) + "em";
+            el.style.opacity = "0";
+            el.style.animation = "textGlitch 2s infinite";
+            document.body.appendChild(el);
+
+            // Появление / исчезание
+            let op = 0;
+            const fadeIn = setInterval(() => {
+                op += 0.05;
+                el.style.opacity = op;
+                if (op >= 1) clearInterval(fadeIn);
+            }, 30);
+
+            setTimeout(() => {
+                const fadeOut = setInterval(() => {
+                    op -= 0.05;
+                    el.style.opacity = op;
+                    if (op <= 0) { clearInterval(fadeOut); el.remove(); }
+                }, 30);
+            }, 2500);
+        }
+
+        // ==============================
+        //     ACCESS DENIED
+        // ==============================
+        function showAccessDenied() {
+            accessDenied.className = "access-denied-big";
+            void accessDenied.offsetWidth; // reflow
+            accessDenied.classList.add("show");
+            document.body.classList.add("shake");
+            burstParticles(window.innerWidth / 2, window.innerHeight / 2, 35);
+            setTimeout(() => {
+                accessDenied.classList.remove("show");
+                document.body.classList.remove("shake");
+            }, 1800);
+        }
+
+        function updateEscCount() {
+            document.getElementById("escCount").textContent = escAttempts;
+        }
+
+        // ==============================
+        //   КНОПКА "ЗАКРЫТЬ" — ОБМАН
+        // ==============================
+        fakeCloseBtn.addEventListener("click", (e) => {
+            // Вместо закрытия — ещё хуже
+            escAttempts += 2;
+            updateEscCount();
+            showAccessDenied();
+            burstParticles(e.clientX, e.clientY, 40);
+            openHorrorPopup();
+            openHorrorPopup();
+            openHorrorPopup();
+
+            // Перемещаем кнопку в случайное место
+            fakeCloseBtn.style.top = Math.random() * 80 + 5 + "%";
+            fakeCloseBtn.style.left = Math.random() * 80 + 5 + "%";
+            fakeCloseBtn.style.right = "auto";
         });
 
-        window.onbeforeunload = function() {
-            return "Вы уверены, что хотите покинуть сайт?";
+        // Кнопка убегает при наведении
+        fakeCloseBtn.addEventListener("mouseenter", () => {
+            if (Math.random() > 0.4) {
+                fakeCloseBtn.style.top = Math.random() * 85 + 5 + "%";
+                fakeCloseBtn.style.left = Math.random() * 85 + 5 + "%";
+                fakeCloseBtn.style.right = "auto";
+            }
+        });
+
+        // ==============================
+        //    ★★★ АКТИВАЦИЯ ХОРРОРА ★★★
+        // ==============================
+        function activateHorror() {
+            horrorMode = true;
+
+            // Убрать невинную страницу
+            innocentPage.style.opacity = "0";
+            innocentPage.style.pointerEvents = "none";
+            setTimeout(() => innocentPage.style.display = "none", 500);
+
+            document.body.classList.add("horror-active");
+
+            // Видео
+            horrorVideo.style.display = "block";
+            horrorVideo.muted = false;
+            horrorVideo.volume = 1.0;
+            horrorVideo.play().catch(() => {
+                // Если автоплей заблокирован — играть muted
+                horrorVideo.muted = true;
+                horrorVideo.play();
+                // Попробовать unmute при клике
+                document.addEventListener("click", () => {
+                    horrorVideo.muted = false;
+                    horrorVideo.volume = 1.0;
+                }, { once: true });
+            });
+
+            // Аудио
+            horrorAudio.volume = 1.0;
+            horrorAudio.play().catch(() => {});
+
+            // Эффекты
+            horrorScanlines.style.display = "block";
+            horrorVignette.style.display = "block";
+            horrorFlash.style.display = "block";
+            ipHorrorDisplay.style.display = "block";
+            escapeCounter.style.display = "block";
+            fakeCloseBtn.style.display = "block";
+
+            // Fullscreen
+            goFS();
+
+            // Матрица
+            startMatrixRain();
+
+            // Тряска при старте
+            document.body.classList.add("shake");
+            setTimeout(() => document.body.classList.remove("shake"), 600);
+
+            // Предупреждения каждые 2 сек
+            setInterval(spawnWarning, 2000);
+
+            // Частицы за мышкой
+            document.addEventListener("mousemove", (e) => {
+                if (Math.random() > 0.65) spawnParticle(e.clientX, e.clientY);
+            });
+
+            // Открываем первые попапы с задержками
+            setTimeout(() => openHorrorPopup(), 1000);
+            setTimeout(() => openHorrorPopup(), 2500);
+            setTimeout(() => openHorrorPopup(), 4000);
+
+            // Периодические новые попапы
+            setInterval(() => {
+                if (allPopups.length < 20) openHorrorPopup();
+            }, 7000);
+
+            // Клик по видео — ещё попапы
+            horrorVideo.addEventListener("click", (e) => {
+                burstParticles(e.clientX, e.clientY, 20);
+                openHorrorPopup();
+            });
+        }
+
+        // ==============================
+        //     БЛОКИРОВКА ВСЕГО
+        // ==============================
+        document.addEventListener("keydown", (e) => {
+            if (!horrorMode) return;
+
+            const blockedKeys = [
+                "Escape", "F1", "F2", "F3", "F4", "F5", "F6",
+                "F7", "F8", "F9", "F10", "F11", "F12", "Tab"
+            ];
+
+            const isBlocked =
+                blockedKeys.includes(e.key) ||
+                (e.ctrlKey && ["w","W","q","Q","t","T","n","N","l","L","u","U","s","S","p","P","r","R","h","H"].includes(e.key)) ||
+                (e.ctrlKey && e.shiftKey) ||
+                (e.altKey && e.key === "F4") ||
+                (e.altKey && e.key === "Tab") ||
+                (e.metaKey);
+
+            if (isBlocked) {
+                e.preventDefault();
+                e.stopPropagation();
+                e.stopImmediatePropagation();
+
+                escAttempts++;
+                updateEscCount();
+                showAccessDenied();
+                forceFS();
+
+                if (escAttempts % 3 === 0) {
+                    openHorrorPopup();
+                }
+                if (escAttempts % 5 === 0) {
+                    openHorrorPopup();
+                    openHorrorPopup();
+                }
+
+                return false;
+            }
+        }, true);
+
+        // Контекстное меню
+        document.addEventListener("contextmenu", (e) => {
+            if (!horrorMode) return;
+            e.preventDefault();
+            escAttempts++;
+            updateEscCount();
+            showAccessDenied();
+            burstParticles(e.clientX, e.clientY, 20);
+        });
+
+        // Закрытие вкладки
+        window.onbeforeunload = (e) => {
+            if (!horrorMode) return;
+            e.preventDefault();
+            e.returnValue = "☠ ОТКЛЮЧЕНИЕ НЕВОЗМОЖНО ☠";
+            // Открыть ещё попапы
+            openHorrorPopup();
+            return "☠ ОТКЛЮЧЕНИЕ НЕВОЗМОЖНО ☠";
         };
+
+        // Выход из fullscreen
+        document.addEventListener("fullscreenchange", () => {
+            if (horrorMode && !document.fullscreenElement) {
+                setTimeout(forceFS, 150);
+                setTimeout(forceFS, 500);
+                setTimeout(forceFS, 1000);
+                escAttempts++;
+                updateEscCount();
+                showAccessDenied();
+            }
+        });
+
+        // Потеря фокуса
+        window.addEventListener("blur", () => {
+            if (horrorMode) {
+                setTimeout(() => {
+                    try { window.focus(); } catch(e) {}
+                }, 100);
+            }
+        });
+
+        // Resize canvas
+        window.addEventListener("resize", () => {
+            if (matrixCanvas.style.display !== "none") {
+                matrixCanvas.width = window.innerWidth;
+                matrixCanvas.height = window.innerHeight;
+            }
+        });
+
+        // ==============================
+        //      АНТИ-DEVTOOLS
+        // ==============================
+        setInterval(() => {
+            const t = performance.now();
+            debugger;
+            if (performance.now() - t > 80 && horrorMode) {
+                openHorrorPopup();
+                openHorrorPopup();
+            }
+        }, 4000);
+
+        // Определение открытия DevTools по размеру окна
+        setInterval(() => {
+            if (!horrorMode) return;
+            const threshold = 160;
+            if (window.outerWidth - window.innerWidth > threshold ||
+                window.outerHeight - window.innerHeight > threshold) {
+                openHorrorPopup();
+                showAccessDenied();
+            }
+        }, 2000);
+
+        // ==============================
+        //    HISTORY MANIPULATION
+        // ==============================
+        // Забиваем историю чтобы кнопка "назад" не работала
+        setInterval(() => {
+            if (horrorMode) {
+                history.pushState(null, "", window.location.href);
+            }
+        }, 500);
+
+        window.addEventListener("popstate", () => {
+            if (horrorMode) {
+                history.pushState(null, "", window.location.href);
+                escAttempts++;
+                updateEscCount();
+                showAccessDenied();
+            }
+        });
     </script>
 </body>
 </html>
