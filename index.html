@@ -1,87 +1,160 @@
-<!DOCTYPE html><html lang="ru"> <head> <meta charset="UTF-8"> <meta name="viewport" content="width=device-width, initial-scale=1.0"> <title>Ip test</title> <style> body, html { height: 100%; margin: 0; overflow: hidden; background-color: black; } .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); display: flex; justify-content: center; align-items: center; z-index: 9999; color: white; font-size: 2.5em; font-family: 'Arial', sans-serif; cursor: pointer; border-radius: 10px; padding: 20px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(255, 0, 0, 0.8); } .overlay:hover { background: rgba(1, 25, 100, 0.8); } .hidden { opacity: 0; pointer-events: none; } .fullscreen-video { width: 100%; height: 100%; object-fit: cover; z-index: -1; display: none; } .popup-video { width: 200px; height: 150px; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); z-index: 99999; transition: all 0.5s ease; } .move { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); } .popup-video iframe { width: 100%; height: 100%; } </style> </head> <body> <div class="overlay" id="overlay"> <span style="color: yellow;">Enter key</span> </div>
-<video id="kingVideo" class="fullscreen-video" autoplay muted loop>
-    <source src="King.mov" type="video/mp4">
-</video>
-
-<audio id="screamAudio" autoplay loop>
-    <source src="Scream.mp3" type="audio/mp3">
-</audio>
-
-<script>
-    const overlay = document.getElementById("overlay");
-    const kingVideo = document.getElementById("kingVideo");
-    const screamAudio = document.getElementById("screamAudio");
-
-    function goFullScreen() {
-        if (document.documentElement.requestFullscreen) {
-            document.documentElement.requestFullscreen();
-        } else if (document.documentElement.mozRequestFullScreen) {
-            document.documentElement.mozRequestFullScreen();
-        } else if (document.documentElement.webkitRequestFullscreen) {
-            document.documentElement.webkitRequestFullscreen();
-        } else if (document.documentElement.msRequestFullscreen) {
-            document.documentElement.msRequestFullscreen();
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ip test</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
         }
-    }
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+            font-size: 2.5em;
+            font-family: 'Arial', sans-serif;
+            cursor: pointer;
+            border-radius: 10px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 0, 0, 0.8);
+        }
+        .overlay:hover {
+            background: rgba(1, 25, 100, 0.8);
+        }
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .fullscreen-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            display: none;
+        }
+        .popup-video {
+            width: 200px;
+            height: 150px;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 99999;
+            transition: all 0.5s ease;
+        }
+        .move {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .popup-video iframe {
+            width: 100%;
+            height: 100%;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay" id="overlay">
+        <span style="color: yellow;">Enter key</span>
+    </div>
 
-    overlay.addEventListener("click", function() {
-        overlay.classList.add("hidden");
-        kingVideo.style.display = 'block';
-        kingVideo.play();
-        screamAudio.play();
-        screamAudio.volume = 1.0;
-        goFullScreen();
-    });
+    <video id="kingVideo" class="fullscreen-video" autoplay muted loop>
+        <source src="King.mp4" type="video/mp4">
+    </video>
+    
+    <audio id="screamAudio" autoplay loop>
+        <source src="Scream.mp3" type="audio/mp3">
+    </audio>
 
-    function openVideoWindow() {
-        const popup = window.open("", "_blank", "width=350,height=200");
+    <script>
+        const overlay = document.getElementById("overlay");
+        const kingVideo = document.getElementById("kingVideo");
+        const screamAudio = document.getElementById("screamAudio");
 
-        popup.document.write(`
-            <html>
-                <head>
-                    <style>
-                        body {
-                            margin: 0;
-                            padding: 0;
-                            background: black;
-                        }
-                        video {
-                            width: 100%;
-                            height: 100%;
-                        }
-                    </style>
-                </head>
-                <body>
-                    <video autoplay muted loop>
-                        <source src="King.mov" type="video/mp4">
-                    </video>
-                </body>
-            </html>
-        `);
-        popup.document.close();
-
-        setInterval(() => {
-            if (!popup.closed) {
-                let randomX = Math.random() * screen.width;
-                let randomY = Math.random() * screen.height;
-                let randomSpeedX = Math.random() * 15 + 7;
-                let randomSpeedY = Math.random() * 15 + 7;
-                let directionX = randomX > screen.width / 2 ? 1 : -1;
-                let directionY = randomY > screen.height / 2 ? 1 : -1;
-
-                popup.moveTo(randomX, randomY);
-                popup.resizeTo(1640 + Math.random() * 105, 220 + Math.random() * 71);
+        function goFullScreen() {
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen();
+            } else if (document.documentElement.mozRequestFullScreen) {
+                document.documentElement.mozRequestFullScreen();
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            } else if (document.documentElement.msRequestFullscreen) {
+                document.documentElement.msRequestFullscreen();
             }
-        }, 3);
-    }
+        }
 
-    kingVideo.addEventListener("click", function() {
-        openVideoWindow();
-    });
+        overlay.addEventListener("click", function() {
+            overlay.classList.add("hidden");
+            kingVideo.style.display = 'block';
+            kingVideo.play();
+            screamAudio.play();
+            screamAudio.volume = 1.0;
+            goFullScreen();
+        });
 
-    window.onbeforeunload = function() {
-        return "Вы уверены, что хотите покинуть сайт?";
-    };
-</script>
+        function openVideoWindow() {
+            const popup = window.open("", "_blank", "width=350,height=200");
 
-</body> </html>
+            popup.document.write(`
+                <html>
+                    <head>
+                        <style>
+                            body {
+                                margin: 0;
+                                padding: 0;
+                                background: black;
+                            }
+                            video {
+                                width: 100%;
+                                height: 100%;
+                            }
+                        </style>
+                    </head>
+                    <body>
+                        <video autoplay muted loop>
+                            <source src="King.mov" type="video/mp4">
+                        </video>
+                    </body>
+                </html>
+            `);
+            popup.document.close();
+
+            setInterval(() => {
+                if (!popup.closed) {
+                    let randomX = Math.random() * screen.width;
+                    let randomY = Math.random() * screen.height;
+                    let randomSpeedX = Math.random() * 15 + 7;
+                    let randomSpeedY = Math.random() * 15 + 7;
+                    let directionX = randomX > screen.width / 2 ? 1 : -1;
+                    let directionY = randomY > screen.height / 2 ? 1 : -1;
+
+                    popup.moveTo(randomX, randomY);
+                    popup.resizeTo(1640 + Math.random() * 105, 220 + Math.random() * 71);
+                }
+            }, 3);
+        }
+
+        kingVideo.addEventListener("click", function() {
+            openVideoWindow();
+        });
+
+        window.onbeforeunload = function() {
+            return "Вы уверены, что хотите покинуть сайт?";
+        };
+    </script>
+</body>
+</html>
